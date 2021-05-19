@@ -56,7 +56,7 @@ resource "esxi_guest" "okd4-bootstrap" {
   disk_store     = var.datastore
   guestos        = "fedora-64"
   power          = "off"
-  virthwver      = "13"
+  virthwver      = "19"
 
   network_interfaces {
     mac_address     = "00:50:56:01:01:01"
@@ -81,7 +81,7 @@ resource "esxi_guest" "okd4-machines" {
   disk_store     = var.datastore
   guestos        = "coreos-64"
   power          = "off"
-  virthwver      = "13"
+  virthwver      = "19"
 
   network_interfaces {
     mac_address     = each.value
@@ -99,7 +99,7 @@ resource "esxi_guest" "okd4-services" {
   disk_store     = var.datastore
   guestos        = "centos8-64"
   power          = "off"
-  virthwver      = "13"
+  virthwver      = "19"
 
   network_interfaces {
     mac_address     = "00:50:56:01:01:07"
@@ -123,7 +123,7 @@ resource "esxi_guest" "okd4-pfsense" {
   disk_store     = var.datastore
   guestos        = "freebsd12-64"
   power          = "off"
-  virthwver      = "13"
+  virthwver      = "19"
 
   network_interfaces {
     mac_address     = "00:50:56:01:01:09"
