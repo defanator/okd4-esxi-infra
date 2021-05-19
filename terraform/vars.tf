@@ -11,10 +11,11 @@ variable "esxi_password" {
 }
 
 variable "datastore" {
-   default = "alldisks" 
+   default = "datastore1"
 }
+
 variable "vlan_id" {
-    default = "20"
+    default = "40"
 }
 
 variable "vswitch" {
@@ -24,6 +25,7 @@ variable "vswitch" {
 variable "home_network" {
     default = "VM Network"
 }
+
 variable "okd_network" {
     default = "OKD"
 }

@@ -1,23 +1,35 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 0.13"
   required_providers {
     esxi = {
-      version = "~> 1.7"
+      source = "registry.terraform.io/josenk/esxi"
     }
   }
+}
+
+provider "esxi" {
+  esxi_hostname = var.esxi_host
+  esxi_hostport = "22"
+  esxi_hostssl  = "443"
+  esxi_username = var.esxi_username
+  esxi_password = var.esxi_password
 }
 
 resource "null_resource" "esxi_network" {
   # These triggers are just a workaround to be able to use variables in the destroy provisioner
   triggers = {
     always_run = "${timestamp()}"
-    netname = var.okd_network
-    switch  = var.vswitch
-    host    = var.esxi_host
+    netname    = var.okd_network
+    switch     = var.vswitch
+    host       = var.esxi_host
+    user       = var.esxi_username
+    password   = var.esxi_password
   }
 
   connection {
-    host = self.triggers.host
+    host     = self.triggers.host
+    user     = self.triggers.user
+    password = self.triggers.password
   }
 
   provisioner "remote-exec" {
@@ -35,19 +47,11 @@ resource "null_resource" "esxi_network" {
   }
 }
 
-provider "esxi" {
-  esxi_hostname      = var.esxi_host
-  esxi_hostport      = "22"
-  esxi_hostssl       = "443"
-  esxi_username      = var.esxi_username
-  esxi_password      = var.esxi_password
-}
-
 resource "esxi_guest" "okd4-bootstrap" {
   guest_name     = "okd4-bootstrap"
   numvcpus       = "4"
   memsize        = "16384"  # in Mb
-  boot_disk_size = "120" # in Gb
+  boot_disk_size = "30" # in Gb
   boot_disk_type = "thin"
   disk_store     = var.datastore
   guestos        = "fedora-64"
@@ -72,10 +76,10 @@ resource "esxi_guest" "okd4-machines" {
   guest_name     = each.key
   numvcpus       = "4"
   memsize        = "16384"  # in Mb
-  boot_disk_size = "120" # in Gb
+  boot_disk_size = "30" # in Gb
   boot_disk_type = "thin"
   disk_store     = var.datastore
-  guestos        = "fedora-64"
+  guestos        = "coreos-64"
   power          = "off"
   virthwver      = "13"
 
@@ -90,10 +94,10 @@ resource "esxi_guest" "okd4-services" {
   guest_name     = "okd4-services"
   numvcpus       = "4"
   memsize        = "4096"  # in Mb
-  boot_disk_size = "100" # in Gb
+  boot_disk_size = "50" # in Gb
   boot_disk_type = "thin"
   disk_store     = var.datastore
-  guestos        = "centos-64"
+  guestos        = "centos8-64"
   power          = "off"
   virthwver      = "13"
 
@@ -117,7 +121,7 @@ resource "esxi_guest" "okd4-pfsense" {
   boot_disk_size = "8" # in Gb
   boot_disk_type = "thin"
   disk_store     = var.datastore
-  guestos        = "freebsd-64"
+  guestos        = "freebsd12-64"
   power          = "off"
   virthwver      = "13"
 
